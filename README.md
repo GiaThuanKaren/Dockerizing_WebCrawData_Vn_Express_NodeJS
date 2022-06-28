@@ -5,6 +5,7 @@
   2) run command in docker or CLI.
       
       1 ) docker build -t container .
+      
       2)  docker run -p 3000:5000 container.
   3) Open browser and access to http://localhost:3000/
       
