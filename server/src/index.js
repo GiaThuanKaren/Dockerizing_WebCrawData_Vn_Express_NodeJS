@@ -13,11 +13,6 @@ app.get("/", (req, res) => {
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html); // load HTML
       let arr = [];
-      // $('.owl-item').each((index, el) => { // lặp từng phần tử có class là job__list-item
-      //   // const job = $(el).find('.job__list-item-title a').text(); // lấy tên job, được nằm trong thẻ a < .job__list-item-title
-
-      //   console.log(123);
-      // })
       $(".col-left article").each((index, el) => {
         // lặp từng phần tử có class là job__list-item
         const tittle = $(el).find("h3 a").text();
@@ -59,7 +54,7 @@ app.get("/catologe", (req, res) => {
           {
             id: id ? id : "",
             name: tittleCatologe.replace(/\s/g, ""),
-            link: href,
+            link: href
           },
         ];
         // const tittle = $(el).text()
@@ -82,38 +77,44 @@ app.get("/query/:string", async (req, res) => {
     return item.link == `/${req.params.string}`;
   });
   if (check) {
-    request(`https://vnexpress.net/${req.params.string}`, (err, response, html) => {
-      if (!err && response.statusCode == 200) {
-        let i=0,result=[];
-        const $ = cheerio.load(html);
-        const news = $('.col-left-folder-v2 article').each((idx,ele)=>{
-          const tittlenews = $(ele).find(".title-news")
-          const TagA=tittlenews.find("a").attr("href");
-          const Name=tittlenews.text(); 
-          const description =  $(ele).find(".description").text();
-          // console.log(description.replace(/\n/g, " "))
-          i++;
-          result=[...result,{
-            name:Name.replace(/\n/g, " "),
-            description:description.replace(/\n/g, " "),
-            link:TagA
-          }]
-        })
-        // console.log(result)
-        res.json(result);
-      } else {
-        res.send("Error Respones");
+    request(
+      `https://vnexpress.net/${req.params.string}`,
+      (err, response, html) => {
+        if (!err && response.statusCode == 200) {
+          let i = 0,
+            result = [];
+          const $ = cheerio.load(html);
+          const news = $(".col-left-folder-v2 article").each((idx, ele) => {
+            const tittlenews = $(ele).find(".title-news");
+            const TagA = tittlenews.find("a").attr("href");
+            const Name = tittlenews.text();
+            const description = $(ele).find(".description").text();
+            // console.log(description.replace(/\n/g, " "))
+            i++;
+            result = [
+              ...result,
+              {
+                name: Name.replace(/\n/g, " "),
+                description: description.replace(/\n/g, " "),
+                link: TagA ? TagA.replace("https://vnexpress.net/","") : null,
+                linkComment:TagA ? `${TagA.replace("https://vnexpress.net/","")}#box_comment_vne` : null,
+              },
+            ];
+          });
+          res.json(result);
+        } else {
+          res.send("Error Respones");
+        }
       }
-    });
+    );
   } else {
     res.send("Invalid Param");
   }
-  // let getrespone=await fetch('http://localhost:5000/catologe');
-  // let catologeArr= await getrespone.json();
-  // console.log(catologeArr)
-
-  // res.send("hiu");
 });
+
+
+
+
 
 app.listen(PORT, () => {
   console.log("Listenning port " + PORT);
