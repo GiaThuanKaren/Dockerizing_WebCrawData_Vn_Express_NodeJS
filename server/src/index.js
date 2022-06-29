@@ -86,9 +86,13 @@ app.get("/query/:string", async (req, res) => {
           const $ = cheerio.load(html);
           const news = $(".col-left-folder-v2 article").each((idx, ele) => {
             const tittlenews = $(ele).find(".title-news");
-            const TagA = tittlenews.find("a").attr("href");
+            const TagA = tittlenews
+              .find("a")
+              .attr("href")
+              
             const Name = tittlenews.text();
             const description = $(ele).find(".description").text();
+     
             // console.log(description.replace(/\n/g, " "))
             i++;
             result = [
@@ -97,7 +101,7 @@ app.get("/query/:string", async (req, res) => {
                 name: Name.replace(/\n/g, " "),
                 description: description.replace(/\n/g, " "),
                 link: TagA ? TagA.replace("https://vnexpress.net/", "") : null,
-                linkComment: TagA
+                linkDetail: TagA
                   ? `${TagA.replace(
                       "https://vnexpress.net/",
                       ""
@@ -122,17 +126,18 @@ app.get("/detail/:link", (req, res) => {
   request(`https://vnexpress.net/${req.params.link}`)
     .then((getres) => {
       const $ = cheerio.load(getres);
-      let i = 0,result=[];
-      let paragraphArticle=""
+      let i = 0,
+        result = [];
+      let paragraphArticle = "";
       const paragraph = $(".Normal").each((idx, ele) => {
         console.log($(ele).text());
-        paragraphArticle+=$(ele).text()+" ";
-        result=[...result,($(ele).text()+" ")]
+        paragraphArticle += $(ele).text() + " ";
+        result = [...result, $(ele).text() + " "];
         console.log("\n");
         i++;
       });
       console.log(i);
-      res.json(result)
+      res.json(result);
     })
     .catch((err) => {
       console.log(err);
@@ -155,7 +160,7 @@ app.get("/full", (req, res) => {
       );
     })
     .then((items) => {
-      res.json(items)
+      res.json(items);
     });
 });
 
