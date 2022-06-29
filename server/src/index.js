@@ -54,7 +54,7 @@ app.get("/catologe", (req, res) => {
           {
             id: id ? id : "",
             name: tittleCatologe.replace(/\s/g, ""),
-            link: href
+            link: href,
           },
         ];
         // const tittle = $(el).text()
@@ -96,8 +96,13 @@ app.get("/query/:string", async (req, res) => {
               {
                 name: Name.replace(/\n/g, " "),
                 description: description.replace(/\n/g, " "),
-                link: TagA ? TagA.replace("https://vnexpress.net/","") : null,
-                linkComment:TagA ? `${TagA.replace("https://vnexpress.net/","")}#box_comment_vne` : null,
+                link: TagA ? TagA.replace("https://vnexpress.net/", "") : null,
+                linkComment: TagA
+                  ? `${TagA.replace(
+                      "https://vnexpress.net/",
+                      ""
+                    )}#box_comment_vne`
+                  : null,
               },
             ];
           });
@@ -112,9 +117,47 @@ app.get("/query/:string", async (req, res) => {
   }
 });
 
+app.get("/detail/:link", (req, res) => {
+  console.log(req.params.link);
+  request(`https://vnexpress.net/${req.params.link}`)
+    .then((getres) => {
+      const $ = cheerio.load(getres);
+      let i = 0,result=[];
+      let paragraphArticle=""
+      const paragraph = $(".Normal").each((idx, ele) => {
+        console.log($(ele).text());
+        paragraphArticle+=$(ele).text()+" ";
+        result=[...result,($(ele).text()+" ")]
+        console.log("\n");
+        i++;
+      });
+      console.log(i);
+      res.json(result)
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json(err);
+    });
+});
 
-
-
+app.get("/full", (req, res) => {
+  Promise.all([
+    request(
+      `http://localhost:5000/detail/de-xuat-chuyen-kcx-tan-thuan-thanh-khu-cong-nghe-dat-o-4481161.html#box_comment_vne`
+    ),
+    request("http://localhost:5000/query/kinh-doanh"),
+  ])
+    .then(function (responses2) {
+      return Promise.all(
+        responses2.map(function (response) {
+          return response.json();
+        })
+      );
+    })
+    .then((items) => {
+      res.json(items)
+    });
+});
 
 app.listen(PORT, () => {
   console.log("Listenning port " + PORT);
