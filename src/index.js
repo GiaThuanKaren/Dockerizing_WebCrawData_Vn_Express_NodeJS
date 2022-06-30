@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
       $(".col-left article").each((index, el) => {
         // lặp từng phần tử có class là job__list-item
         const tittle = $(el).find("h3 a").text();
-        const linkdetail = $(el).find("h3 a").attr("href");
+        const linkdetail = $(el).find("h3 a").attr("href").replace("https://vnexpress.net/", "");
         const des = $(el).find(".description a ").text();
         const picture = $(el).find("picture source").attr("srcset");
         // console.log(linkdetail);
