@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
-const PORT = 5000;
+const PORT =process.env.PORT || 5000;
 let ARR_TYPE = [];
 const cheerio = require("cheerio"); // khai báo module cheerio
 
