@@ -145,25 +145,6 @@ app.get("/detail/:link", (req, res) => {
     });
 });
 
-app.get("/full", (req, res) => {
-  Promise.all([
-    request(
-      `http://localhost:5000/detail/de-xuat-chuyen-kcx-tan-thuan-thanh-khu-cong-nghe-dat-o-4481161.html#box_comment_vne`
-    ),
-    request("http://localhost:5000/query/kinh-doanh"),
-  ])
-    .then(function (responses2) {
-      return Promise.all(
-        responses2.map(function (response) {
-          return response.json();
-        })
-      );
-    })
-    .then((items) => {
-      res.json(items);
-    });
-});
-
 app.listen(PORT, () => {
   console.log("Listenning port " + PORT);
 });
